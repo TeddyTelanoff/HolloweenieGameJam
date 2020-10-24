@@ -1,10 +1,23 @@
 class Wall implements IWall {
   PVector pos, size;
+  PImage img;
+  
+  void create() {
+    size.x = abs(size.x);
+    size.y = abs(size.y);
+    
+    if (sprites.get("wall") != null)
+      img = tile(sprites.get("wall"), size.x, size.y);
+  }
 
   void draw() {
-    noStroke();
-    fill(#51235F);
-    rect(pos.x, pos.y, size.x, size.y);
+    if (sprites.get("wall") == null) {
+      noStroke();
+      fill(#51235F);
+      rect(pos.x, pos.y, size.x, size.y);
+    } else {
+      image(img, pos.x, pos.y, size.x, size.y);
+    }
   }
 
   boolean isColliding(Player player) {

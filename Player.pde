@@ -25,10 +25,10 @@ class Player implements IPlayer {
     if (keys.contains(VK_SPACE))
       attack();
 
-    PVector ppos = pos.copy();
-
     pos.add(vel);
     vel.lerp(new PVector(), 0.75);
+    
+    health = maxHealth;
     
     if (pos.x < 0)
       pos.x = 0;
@@ -41,9 +41,12 @@ class Player implements IPlayer {
 
     for (Wall wall : walls)
       if (wall.isColliding(this)) {
-        pos = ppos.copy();
-
-        break;
+        if (wall.pos.x + wall.size.x >= pos.x - size / 2) {
+          pos.x -= (pos.x - size / 2) - (wall.pos.x + wall.size.x);
+        }
+        else if (wall.pos.x <= pos.x + size / 2) {
+          pos.x += (pos.x + size / 2) - (wall.pos.x);
+        }
       }
       
     for (int i = healthBoosters.size() - 1; i >= 0; i--)

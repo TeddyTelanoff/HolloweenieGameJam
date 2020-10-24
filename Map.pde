@@ -17,6 +17,8 @@ class Map implements IMap {
           {
             pos = Map.this.pos;
             size = Map.this.size;
+            
+            create();
           }
         }
         );

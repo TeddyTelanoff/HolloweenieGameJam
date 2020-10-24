@@ -75,13 +75,13 @@ void setup() {
 
   map = new Map() {
     {
-      create("data/map.spooky");
+      create("data/test.spooky");
     }
   };
 
   player = new Player() {
     {
-      pos = new PVector(300, 300);
+      pos = new PVector(350, 300);
       vel = new PVector();
       speed = 300;
       size = 50;
@@ -132,7 +132,8 @@ void draw() {
   player.drawUI();
 }
 
-PImage scale(PImage img, int nwidth, int nheight) {
+PImage scale(PImage img, float pnwidth, float pnheight) {
+  int nwidth = (int)pnwidth, nheight = (int)pnheight;
   PImage out = createImage(nwidth, nheight, img.format);
 
   float scaleX = (float)img.width / (float)nwidth, scaleY = (float)img.height / (float)nheight;
@@ -142,6 +143,18 @@ PImage scale(PImage img, int nwidth, int nheight) {
       out.pixels[x + y * nwidth] = img.pixels[int(x * scaleX) + int(y * scaleY) * img.pixelWidth];
     }
 
+  return out;
+}
+
+PImage tile(PImage img, float pnwidth, float pnheight) {
+  int nwidth = (int)pnwidth, nheight = (int)pnheight;
+  PImage out = createImage(nwidth, nheight, img.format);
+  
+  for (int y = 0; y < nheight; y++)
+    for (int x = 0; x < nwidth; x++) {
+      out.pixels[x + y * nwidth] = img.pixels[(x % img.pixelWidth) + (y % img.pixelHeight) * img.pixelWidth];
+    }
+  
   return out;
 }
 
