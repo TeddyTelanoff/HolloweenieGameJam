@@ -29,6 +29,15 @@ class Player implements IPlayer {
 
     pos.add(vel);
     vel.lerp(new PVector(), 0.75);
+    
+    if (pos.x < 0)
+      pos.x = 0;
+    if (pos.y < 0)
+      pos.y = 0;
+    if (pos.x > width)
+      pos.x = width;
+    if (pos.y > height)
+      pos.y = height;
 
     for (Wall wall : walls)
       if (wall.isColliding(this)) {
@@ -63,8 +72,12 @@ class Player implements IPlayer {
       fill(0x3950ABC1);
       circle(pos.x, pos.y, attackDist * 2);
     }
-    fill(#FFFF00);
-    square(pos.x - size / 2, pos.y - size / 2, size);
+    if (sprites.get("player") == null) {
+      fill(#FFFF00);
+      square(pos.x - size / 2, pos.y - size / 2, size);
+    } else {
+      image(sprites.get("player"), pos.x - size / 2, pos.y - size / 2, size, size);
+    }
   }
 
   void drawUI() {
@@ -113,6 +126,9 @@ class Player implements IPlayer {
         }
       }
     updatePixels();
+    
+    if (health < 5 && sprites.get("death_overlay") != null)
+      image(sprites.get("death_overlay"), 0, 0);
   }
 
   void move(PVector dir) {

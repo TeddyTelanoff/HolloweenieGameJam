@@ -3,6 +3,8 @@ import static java.awt.event.KeyEvent.*;
 Player player;
 Map map;
 
+HashMap<String, PImage> sprites = new HashMap();
+
 ArrayList<Ghost> ghosts = new ArrayList();
 ArrayList<Wall> walls = new ArrayList();
 ArrayList<HealthBooster> healthBoosters = new ArrayList();
@@ -16,15 +18,16 @@ Ghost createGhost() {
     {
       pos = new PVector(random(width), random(height));
       vel = new PVector();
+      ang = radians(random(360));
       speed = 150;
       size = 45;
       viewDist = 200;
 
       attackDist = 100;
       attackDamageMin = 0;
-      attackDamageMax = 1.25;
+      attackDamageMax = 2.25;
       attackTime = 0.15;
-      attackTicks = attackCooldown = 2;
+      attackTicks = attackCooldown = 3.75;
     }
   }
   );
@@ -63,6 +66,13 @@ HealthBooster createHealthBooster() {
 void setup() {
   size(1280, 720);
 
+  sprites.put("player", scale(loadImage("data/player.png"), 50, 50));
+  sprites.put("heart", scale(loadImage("data/heart.png"), 30, 30));
+  sprites.put("ghost", scale(loadImage("data/ghost.png"), 45, 45));
+  sprites.put("wall", loadImage("data/wall.png"));
+  sprites.put("death_overlay", scale(loadImage("data/death_overlay.png"), width, height));
+  sprites.put("background", scale(loadImage("data/background.png"), width, height));
+
   map = new Map() {
     {
       create("data/map.spooky");
@@ -88,10 +98,10 @@ void setup() {
     }
   };
 
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 12; i++)
     createGhost();
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 8; i++)
     createHealthBooster();
 }
 
@@ -99,7 +109,10 @@ void draw() {
   deltaTime = (float)(millis() - time) / 1000;
   time = millis();
 
-  background(64);
+  if (sprites.get("background") == null)
+    background(64);
+  else
+    background(sprites.get("background"));
 
   player.update();
   for (int i = 0; i < ghosts.size(); i++)
@@ -110,13 +123,26 @@ void draw() {
 
   for (int i = 0; i < ghosts.size(); i++)
     ghosts.get(i).draw();
-    
+
   for (int i = 0; i < healthBoosters.size(); i++)
     healthBoosters.get(i).draw();
 
   player.draw();
   player.mask();
   player.drawUI();
+}
+
+PImage scale(PImage img, int nwidth, int nheight) {
+  PImage out = createImage(nwidth, nheight, img.format);
+
+  float scaleX = (float)img.width / (float)nwidth, scaleY = (float)img.height / (float)nheight;
+
+  for (int y = 0; y < nheight; y++)
+    for (int x = 0; x < nwidth; x++) {
+      out.pixels[x + y * nwidth] = img.pixels[int(x * scaleX) + int(y * scaleY) * img.pixelWidth];
+    }
+
+  return out;
 }
 
 //
