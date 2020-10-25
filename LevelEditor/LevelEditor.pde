@@ -40,19 +40,19 @@ void keyReleased() {
 }
 
 void mousePressed() {
-  if (mouseButton == 0) {
+  if (mouseButton == LEFT) {
     pos = new PVector(mouseX, mouseY);
     mousePressing = true;
   }
 }
 
 void mouseReleased() {
-  if (mouseButton == 0) {
+  if (mouseButton == LEFT) {
     mousePressing = false;
 
     shapes.add(pos);
     shapes.add(size);
-  } else if (mouseButton == 1) {
+  } else if (mouseButton == RIGHT) {
     spawn = new PVector(mouseX, mouseY);
   }
 }
@@ -80,7 +80,7 @@ void save() {
 void save(String filepath) {
   PrintWriter out = createWriter(filepath);
 
-  out.append(String.format("spawn %.2f %.2f", 
+  out.append(String.format("spawn %.2f %.2f\n", 
     spawn.x, spawn.y));
 
   for (int i = 0; i < shapes.size() / 2; i++)
