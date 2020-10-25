@@ -26,7 +26,6 @@ class Player implements IPlayer {
       attack();
 
     pos.add(vel);
-    vel.lerp(new PVector(), 0.75);
     
     health = maxHealth;
     
@@ -41,13 +40,22 @@ class Player implements IPlayer {
 
     for (Wall wall : walls)
       if (wall.isColliding(this)) {
-        if (wall.pos.x + wall.size.x >= pos.x - size / 2) {
-          pos.x -= (pos.x - size / 2) - (wall.pos.x + wall.size.x);
+        if (wall.pos.x + wall.size.x >= pos.x - size / 2 && wall.pos.x + wall.size.x <= pos.x + size / 2) {
+          pos.x -= vel.x;
         }
-        else if (wall.pos.x <= pos.x + size / 2) {
-          pos.x += (pos.x + size / 2) - (wall.pos.x);
+        if (wall.pos.x <= pos.x + size / 2 && wall.pos.x >= pos.x - size / 2) {
+          pos.x -= vel.x;
+        }
+        
+        if (wall.pos.y + wall.size.y >= pos.y - size / 2 && wall.pos.y + wall.size.y <= pos.y + size / 2) {
+          pos.y -= vel.y;
+        }
+        if (wall.pos.y <= pos.y + size / 2 && wall.pos.y >= pos.y - size / 2) {
+          pos.y -= vel.y;
         }
       }
+      
+    vel.lerp(new PVector(), 0.75);
       
     for (int i = healthBoosters.size() - 1; i >= 0; i--)
       if (sqrt(pow(healthBoosters.get(i).pos.x - pos.x, 2) + pow(healthBoosters.get(i).pos.y - pos.y, 2)) <= hpReach) {

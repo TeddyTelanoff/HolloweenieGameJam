@@ -128,7 +128,7 @@ void draw() {
     healthBoosters.get(i).draw();
 
   player.draw();
-  player.mask();
+  //player.mask();
   player.drawUI();
 }
 
