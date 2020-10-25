@@ -4,10 +4,9 @@ import processing.awt.PSurfaceAWT;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 import java.io.File;
 
-PVector pos, size;
+PVector spawn, pos, size;
 
 ArrayList<PVector> shapes = new ArrayList();
 
@@ -29,7 +28,7 @@ void draw() {
 
   if (mousePressing) {
     size = new PVector(mouseX, mouseY).sub(pos);
-    rect(pos.x, pos.y, size.x, size.y);
+    rect(pos.x, pos.y, abs(size.x), abs(size.y));
   }
 }
 
@@ -41,15 +40,21 @@ void keyReleased() {
 }
 
 void mousePressed() {
-  pos = new PVector(mouseX, mouseY);
-  mousePressing = true;
+  if (mouseButton == 0) {
+    pos = new PVector(mouseX, mouseY);
+    mousePressing = true;
+  }
 }
 
 void mouseReleased() {
-  mousePressing = false;
+  if (mouseButton == 0) {
+    mousePressing = false;
 
-  shapes.add(pos);
-  shapes.add(size);
+    shapes.add(pos);
+    shapes.add(size);
+  } else if (mouseButton == 1) {
+    spawn = new PVector(mouseX, mouseY);
+  }
 }
 
 void exit() {
@@ -75,10 +80,13 @@ void save() {
 void save(String filepath) {
   PrintWriter out = createWriter(filepath);
 
+  out.append(String.format("spawn %.2f %.2f", 
+    spawn.x, spawn.y));
+
   for (int i = 0; i < shapes.size() / 2; i++)
     out.append(String.format("wall %.2f %.2f %.2f %.2f\n", 
-      shapes.get(i * 2 + 0).x, shapes.get(i * 2 + 0).y, 
-      shapes.get(i * 2 + 1).x, shapes.get(i * 2 + 1).y));
+      abs(shapes.get(i * 2 + 0).x), abs(shapes.get(i * 2 + 0).y), 
+      abs(shapes.get(i * 2 + 1).x), abs(shapes.get(i * 2 + 1).y)));
 
   out.flush();
   out.close();

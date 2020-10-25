@@ -28,6 +28,10 @@ class Wall implements IWall {
     PVector size = new PVector(ghost.size, ghost.size);
     return isColliding(PVector.sub(ghost.pos, PVector.div(size, 2)), size);
   }
+  boolean isColliding(Spider spider) {
+    PVector size = new PVector(spider.size, spider.size);
+    return isColliding(PVector.sub(spider.pos, PVector.div(size, 2)), size);
+  }
   boolean isColliding(HealthBooster healthBooster) {
     PVector size = new PVector(healthBooster.diam, healthBooster.diam);
     return isColliding(PVector.sub(healthBooster.pos, PVector.div(size, 2)), size);

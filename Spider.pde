@@ -1,8 +1,8 @@
-class Ghost implements IGhost {
-  PVector pos, vel, dir;
-  float speed, ang, viewDist, size, 
-    attackDist, attackDamageMin, attackDamageMax, attackTime, attackCooldown, attackTicks;
-
+class Spider implements ISpider {
+  PVector pos, dir, vel;
+  float speed, size, ang, viewDist, 
+    attackDist, attackDamageMin, attackDamageMax, attackTime, attackCooldown, attackTicks;;
+  
   void update() {
     if (attackTicks < attackCooldown) {
       attackTicks += deltaTime;
@@ -20,6 +20,24 @@ class Ghost implements IGhost {
     vel.add(PVector.mult(dir, speed).mult(deltaTime));
 
     pos.add(vel);
+    
+    for (Wall wall : walls)
+      if (wall.isColliding(this)) {
+        if (wall.pos.x + wall.size.x >= pos.x - size / 2 && wall.pos.x + wall.size.x <= pos.x + size / 2) {
+          pos.x -= vel.x;
+        }
+        if (wall.pos.x <= pos.x + size / 2 && wall.pos.x >= pos.x - size / 2) {
+          pos.x -= vel.x;
+        }
+        
+        if (wall.pos.y + wall.size.y >= pos.y - size / 2 && wall.pos.y + wall.size.y <= pos.y + size / 2) {
+          pos.y -= vel.y;
+        }
+        if (wall.pos.y <= pos.y + size / 2 && wall.pos.y >= pos.y - size / 2) {
+          pos.y -= vel.y;
+        }
+      }
+    
     vel.lerp(new PVector(), 0.75);
 
     if (pos.x < 0)
@@ -31,7 +49,7 @@ class Ghost implements IGhost {
     if (pos.y > height)
       pos.y = 0;
   }
-
+  
   void attack() {
     if (sqrt(pow(player.pos.x - pos.x, 2) + pow(player.pos.y - pos.y, 2)) <= viewDist) {
       player.health -= map(attackTicks, 0, attackCooldown, attackDamageMin, attackDamageMax);
@@ -39,13 +57,13 @@ class Ghost implements IGhost {
 
     attackTicks = 0;
   }
-
+  
   void draw() {
-    if (sprites.get("ghost") == null) {
-      fill(#FF0000);
+    if (sprites.get("spider") == null) {
+      fill(24);
       square(pos.x - size / 2, pos.y - size / 2, size);
     } else {
-      image(sprites.get("ghost"), pos.x - size / 2, pos.y - size / 2, size, size);
+      image(sprites.get("spider"), pos.x - size / 2, pos.y - size / 2, size, size);
     }
   }
 }

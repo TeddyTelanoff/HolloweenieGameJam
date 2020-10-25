@@ -27,8 +27,6 @@ class Player implements IPlayer {
 
     pos.add(vel);
     
-    health = maxHealth;
-    
     if (pos.x < 0)
       pos.x = 0;
     if (pos.y < 0)
@@ -67,14 +65,27 @@ class Player implements IPlayer {
         break;
       }
 
-    if (attackTicks < attackTime)
+    if (attackTicks < attackTime) {
       for (int i = ghosts.size() - 1; i >= 0; i--) {
         if (sqrt(pow(ghosts.get(i).pos.x - pos.x, 2) + pow(ghosts.get(i).pos.y - pos.y, 2)) <= attackDist) {
           ghosts.remove(i);
+          
+          attackTicks += 0.02;
 
           createGhost();
         }
       }
+      
+      for (int i = spiders.size() - 1; i >= 0; i--) {
+        if (sqrt(pow(spiders.get(i).pos.x - pos.x, 2) + pow(spiders.get(i).pos.y - pos.y, 2)) <= attackDist) {
+          spiders.remove(i);
+          
+          attackTicks += 0.03;
+
+          createSpider();
+        }
+      }
+    }
   }
 
   void draw() {
@@ -97,13 +108,13 @@ class Player implements IPlayer {
   }
 
   void drawHealth() {
-    fill(#5F502D);
+    fill(0x455F502D);
     strokeWeight(4);
-    stroke(#746137);
+    stroke(0x45746137);
     rect(25 + 25 + attackIndicatorSize.x + 4 - 4, 15 - 4, healthBarSize.x + 8, healthBarSize.y + 8);
 
     if (health > 0) {
-      fill(#F50A51);
+      fill(0x45F50A51);
       noStroke();
       rect(25 + 25 + attackIndicatorSize.x + 4, 15, (health / maxHealth) * healthBarSize.x, healthBarSize.y);
     }
@@ -116,13 +127,13 @@ class Player implements IPlayer {
   }
 
   void attackIndicator() {
-    fill(#5F502D);
+    fill(0x455F502D);
     strokeWeight(4);
     stroke(#746137);
     rect(25 - 4, 15 - 4, attackIndicatorSize.x + 8, attackIndicatorSize.y + 8);
 
     if (attackTicks != 0) {
-      fill(#50ABC1);
+      fill(0x4550ABC1);
       noStroke();
       rect(25, 15, (attackTicks / attackCooldown) * attackIndicatorSize.x, attackIndicatorSize.y);
     }

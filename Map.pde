@@ -17,11 +17,33 @@ class Map implements IMap {
           {
             pos = Map.this.pos;
             size = Map.this.size;
-            
+
             create();
           }
         }
         );
+        break;
+      case "spawn":
+        pos = new PVector(float(args[1]), float(args[2]));
+      
+        player = new Player() {
+          {
+            pos = Map.this.pos;
+            vel = new PVector();
+            speed = 300;
+            size = 50;
+            viewDist = 250;
+
+            attackDist = 175;
+            attackTime = 0.25;
+            attackTicks = attackCooldown = 1.75;
+            attackIndicatorSize = new PVector(300, 50);
+
+            health = maxHealth = 100;
+            healthBarSize = new PVector(300, 50);
+            hpReach = 75;
+          }
+        };
         break;
       }
     }
