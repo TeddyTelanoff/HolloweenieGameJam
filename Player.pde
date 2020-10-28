@@ -87,7 +87,7 @@ class Player implements IPlayer {
       }
     }
     
-    maskShader.set("playerPos", pos.x / (float) width, pos.y / (float) height);
+    maskShader.set("playerPos", pos.x - width / 2, -(pos.y - height / 2));
   }
 
   void draw() {

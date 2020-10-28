@@ -25,7 +25,7 @@ class Map implements IMap {
         break;
       case "spawn":
         pos = new PVector(float(args[1]), float(args[2]));
-      
+
         player = new Player() {
           {
             pos = Map.this.pos;
@@ -44,8 +44,16 @@ class Map implements IMap {
             hpReach = 75;
           }
         };
-        
+
+        //mask = createImage((int) player.viewDist, (int) player.viewDist, ARGB);
+        //for (int y = 0; y < player.viewDist; y++)
+        //  for (int x = 0; x < player.viewDist; x++)
+        //    if (dist((int) player.viewDist / 2, (int) player.viewDist / 2, x, y) <= player.viewDist)
+        //      mask.pixels[x + y * (int) player.viewDist] = color(0);
+
+        //maskShader.set("playerView", player.viewDist * 2 / (float) width - 1, player.viewDist * 2 / (float) height - 1);
         maskShader.set("playerView", player.viewDist);
+        //maskShader.set("playerView", 1, 1);
         break;
       }
     }

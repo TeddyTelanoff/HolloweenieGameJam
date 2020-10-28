@@ -6,6 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 PShader maskShader;
+PImage mask;
 
 Player player;
 Map map;
@@ -65,7 +66,7 @@ Spider createSpider() {
 
   for (Wall wall : walls)
     if (wall.isColliding(spider)) {
-      ghosts.remove(spider);
+      spiders.remove(spider);
 
       return createSpider();
     }
@@ -95,17 +96,20 @@ HealthBooster createHealthBooster() {
 }
 
 void setup() {
-  size(1280, 720, P2D);
+  size(1280, 720, P3D);
+  noSmooth();
+  
+  surface.setResizable(false);
   
   maskShader = loadShader("data/shaders/mask.fsh", "data/shaders/mask.vsh");
 
-  sprites.put("player", scale(loadImage("data/sprites/player.png"), 50, 50));
-  sprites.put("heart", scale(loadImage("data/sprites/heart.png"), 30, 30));
-  sprites.put("ghost", scale(loadImage("data/sprites/ghost.png"), 45, 45));
-  sprites.put("spider", scale(loadImage("data/sprites/spider.png"), 60, 60));
-  sprites.put("wall", loadImage("data/sprites/wall.png"));
-  sprites.put("death_overlay", scale(loadImage("data/sprites/death_overlay.png"), width, height));
-  sprites.put("background", scale(loadImage("data/sprites/background.png"), width, height));
+  //sprites.put("player", scale(loadImage("data/sprites/player.png"), 50, 50));
+  //sprites.put("heart", scale(loadImage("data/sprites/heart.png"), 30, 30));
+  //sprites.put("ghost", scale(loadImage("data/sprites/ghost.png"), 45, 45));
+  //sprites.put("spider", scale(loadImage("data/sprites/spider.png"), 60, 60));
+  //sprites.put("wall", loadImage("data/sprites/wall.png"));
+  //sprites.put("death_overlay", scale(loadImage("data/sprites/death_overlay.png"), width, height));
+  //sprites.put("background", scale(loadImage("data/sprites/background.png"), width, height));
 
 
   map = new Map() {
@@ -125,14 +129,13 @@ void setup() {
 
 void draw() {
   surface.setTitle("Holloweenie Game Jam - Treidex | FPS: " + frameRate);
+  shader(maskShader);
+  maskShader.set("viewWidth", width);
+  maskShader.set("viewHeight", height);
+  maskShader.set("playerMask", mask);
   
   deltaTime = (float)(millis() - time) / 1000;
   time = millis();
-
-  if (sprites.get("background") == null)
-    background(64);
-  else
-    background(sprites.get("background"));
 
   player.update();
   for (int i = 0; i < ghosts.size(); i++)
@@ -141,8 +144,16 @@ void draw() {
   for (int i = 0; i < spiders.size(); i++)
     spiders.get(i).update();
     
-  shader(maskShader);
-
+  if (sprites.get("background") == null) {
+    clear();
+    noStroke();
+    fill(64);
+    //square(player.pos.x - player.viewDist, player.pos.y - player.viewDist, player.viewDist * 2);
+    rect(0, 0, width, height);
+  }
+  else
+    image(sprites.get("background"), 0, 0, width, height);
+  
   for (int i = 0; i < walls.size(); i++)
     walls.get(i).draw();
 
@@ -155,8 +166,8 @@ void draw() {
   for (int i = 0; i < healthBoosters.size(); i++)
     healthBoosters.get(i).draw();
 
-  player.draw();
   player.health = player.maxHealth;
+  player.draw();
   //player.mask();
   resetShader();
   player.drawUI();
@@ -189,6 +200,11 @@ PImage tile(PImage img, float pnwidth, float pnheight) {
     }
 
   return out;
+}
+
+void image(PImage i, float x, float y, float w, float h) {
+  maskShader.set("texSize", w, h);
+  super.image(i, x, y, w, h);
 }
 
 //
