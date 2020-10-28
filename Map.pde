@@ -44,6 +44,8 @@ class Map implements IMap {
             hpReach = 75;
           }
         };
+        
+        maskShader.set("playerView", player.viewDist);
         break;
       }
     }

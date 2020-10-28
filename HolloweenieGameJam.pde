@@ -5,6 +5,8 @@ import processing.awt.PSurfaceAWT;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+PShader maskShader;
+
 Player player;
 Map map;
 
@@ -93,20 +95,22 @@ HealthBooster createHealthBooster() {
 }
 
 void setup() {
-  size(1280, 720);
+  size(1280, 720, P2D);
+  
+  maskShader = loadShader("data/shaders/mask.fsh", "data/shaders/mask.vsh");
 
-  sprites.put("player", scale(loadImage("data/player.png"), 50, 50));
-  sprites.put("heart", scale(loadImage("data/heart.png"), 30, 30));
-  sprites.put("ghost", scale(loadImage("data/ghost.png"), 45, 45));
-  sprites.put("spider", scale(loadImage("data/spider.png"), 60, 60));
-  sprites.put("wall", loadImage("data/wall.png"));
-  sprites.put("death_overlay", scale(loadImage("data/death_overlay.png"), width, height));
-  sprites.put("background", scale(loadImage("data/background.png"), width, height));
+  sprites.put("player", scale(loadImage("data/sprites/player.png"), 50, 50));
+  sprites.put("heart", scale(loadImage("data/sprites/heart.png"), 30, 30));
+  sprites.put("ghost", scale(loadImage("data/sprites/ghost.png"), 45, 45));
+  sprites.put("spider", scale(loadImage("data/sprites/spider.png"), 60, 60));
+  sprites.put("wall", loadImage("data/sprites/wall.png"));
+  sprites.put("death_overlay", scale(loadImage("data/sprites/death_overlay.png"), width, height));
+  sprites.put("background", scale(loadImage("data/sprites/background.png"), width, height));
 
 
   map = new Map() {
     {
-      create("data/main.spooky");
+      create("data/maps/main.spooky");
     }
   };
 
@@ -120,6 +124,8 @@ void setup() {
 }
 
 void draw() {
+  surface.setTitle("Holloweenie Game Jam - Treidex | FPS: " + frameRate);
+  
   deltaTime = (float)(millis() - time) / 1000;
   time = millis();
 
@@ -134,6 +140,8 @@ void draw() {
     
   for (int i = 0; i < spiders.size(); i++)
     spiders.get(i).update();
+    
+  shader(maskShader);
 
   for (int i = 0; i < walls.size(); i++)
     walls.get(i).draw();
@@ -148,11 +156,16 @@ void draw() {
     healthBoosters.get(i).draw();
 
   player.draw();
-  player.mask();
+  player.health = player.maxHealth;
+  //player.mask();
+  resetShader();
   player.drawUI();
 }
 
 PImage scale(PImage img, float pnwidth, float pnheight) {
+  if (img == null)
+    return null;
+  
   int nwidth = (int)pnwidth, nheight = (int)pnheight;
   PImage out = createImage(nwidth, nheight, img.format);
 
